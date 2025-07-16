@@ -5,6 +5,5 @@ resources:
   - accounts-db.yaml
   - prometheus-svc.yaml
   - prometheus-route.yaml
-  - alerts/kafka.rules.yaml
   - alerts/postgres.rules.yaml
   - kafka/redops-kafka.yaml

@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: redops-demo
-  namespace: openshift-gitops
+  namespace: redops
 spec:
   project: default
   source:
