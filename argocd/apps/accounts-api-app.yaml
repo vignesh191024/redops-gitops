@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: accounts-api
+  namespace: redops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/vignesh191024/redops-gitops.git
+    targetRevision: HEAD
+    path: apps/accounts-api
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: redops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

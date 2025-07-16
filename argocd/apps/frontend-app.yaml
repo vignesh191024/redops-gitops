@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: redops-demo
+  name: frontend
   namespace: redops
 spec:
   project: default
   source:
-    repoURL: https://github.com/vignesh191024/redops-prototype.git
-    targetRevision: main
-    path: base
+    repoURL: https://github.com/vignesh191024/redops-gitops.git
+    targetRevision: HEAD
+    path: apps/frontend
   destination:
     server: https://kubernetes.default.svc
     namespace: redops
@@ -16,5 +16,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
