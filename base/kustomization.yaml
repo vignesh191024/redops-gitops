@@ -7,3 +7,4 @@ resources:
   - prometheus-route.yaml
   - alerts/kafka.rules.yaml
   - alerts/postgres.rules.yaml
+  - kafka/redops-kafka.yaml
