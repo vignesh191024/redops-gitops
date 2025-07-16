@@ -1,295 +1,74 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    deployment.kubernetes.io/revision: "7"
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"accounts-api"},"name":"accounts-api","namespace":"redops"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"accounts-api"}},"template":{"metadata":{"labels":{"app":"accounts-api"}},"spec":{"containers":[{"env":[{"name":"ACCOUNTS_DB_URI","value":"postgresql://accounts-admin:accounts-pwd@accounts-db.redops.svc.cluster.local:5432/accounts"},{"name":"ENABLE_TRACING","value":"false"},{"name":"PORT","value":"8080"},{"name":"POSTGRESQL_DATABASE","value":"accounts"},{"name":"POSTGRESQL_PASSWORD","value":"accounts-pwd"},{"name":"POSTGRESQL_USER","value":"accounts-admin"},{"name":"ALLOW_EMPTY_PASSWORD","value":"yes"},{"name":"BITNAMI_POSTGRESQL_DATA_DIR","value":"/var/lib/postgresql/data"},{"name":"TOKEN_EXPIRY_SECONDS","value":"3600"},{"name":"DISABLE_AUTH","value":"true"},{"name":"DEBUG_SLEEP","value":"1"},{"name":"PRIV_KEY_PATH","value":"/app/secrets/private.pem"},{"name":"PUB_KEY_PATH","value":"/app/secrets/public.pem"}],"image":"image-registry.openshift-image-registry.svc:5000/redops/accounts-api@sha256:51ea46ff55a1c9adfb6442eba06de4d8a82a525392bba4129df3cb56c332c021","imagePullPolicy":"Always","name":"accounts-api","ports":[{"containerPort":8080}],"resources":{"limits":{"cpu":"300m","memory":"512Mi"},"requests":{"cpu":"200m","memory":"200Mi"}},"volumeMounts":[{"mountPath":"/app/secrets","name":"jwt-keys"}]}],"volumes":[{"name":"jwt-keys","secret":{"secretName":"userservice-jwt-keys"}}]}}}}
-  creationTimestamp: "2025-07-04T22:53:59Z"
-  generation: 17
-  labels:
-    app: accounts-api
-  managedFields:
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:kubectl.kubernetes.io/last-applied-configuration: {}
-        f:labels:
-          .: {}
-          f:app: {}
-      f:spec:
-        f:progressDeadlineSeconds: {}
-        f:revisionHistoryLimit: {}
-        f:selector: {}
-        f:strategy:
-          f:rollingUpdate:
-            .: {}
-            f:maxSurge: {}
-            f:maxUnavailable: {}
-          f:type: {}
-        f:template:
-          f:metadata:
-            f:labels:
-              .: {}
-              f:app: {}
-          f:spec:
-            f:containers:
-              k:{"name":"accounts-api"}:
-                .: {}
-                f:env:
-                  .: {}
-                  k:{"name":"ACCOUNTS_DB_URI"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"ALLOW_EMPTY_PASSWORD"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"BITNAMI_POSTGRESQL_DATA_DIR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"DEBUG_SLEEP"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"DISABLE_AUTH"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"ENABLE_TRACING"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"PORT"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"POSTGRESQL_DATABASE"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"POSTGRESQL_PASSWORD"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"POSTGRESQL_USER"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"PRIV_KEY_PATH"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"PUB_KEY_PATH"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"TOKEN_EXPIRY_SECONDS"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                f:imagePullPolicy: {}
-                f:name: {}
-                f:ports:
-                  .: {}
-                  k:{"containerPort":8080,"protocol":"TCP"}:
-                    .: {}
-                    f:containerPort: {}
-                    f:protocol: {}
-                f:resources:
-                  .: {}
-                  f:limits:
-                    .: {}
-                    f:cpu: {}
-                    f:memory: {}
-                  f:requests:
-                    .: {}
-                    f:cpu: {}
-                    f:memory: {}
-                f:terminationMessagePath: {}
-                f:terminationMessagePolicy: {}
-                f:volumeMounts:
-                  .: {}
-                  k:{"mountPath":"/app/secrets"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-            f:dnsPolicy: {}
-            f:restartPolicy: {}
-            f:schedulerName: {}
-            f:securityContext: {}
-            f:terminationGracePeriodSeconds: {}
-            f:volumes:
-              .: {}
-              k:{"name":"jwt-keys"}:
-                .: {}
-                f:name: {}
-                f:secret:
-                  .: {}
-                  f:defaultMode: {}
-                  f:secretName: {}
-    manager: kubectl-client-side-apply
-    operation: Update
-    time: "2025-07-04T23:13:15Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:spec:
-            f:containers:
-              k:{"name":"accounts-api"}:
-                f:image: {}
-    manager: kubectl-set
-    operation: Update
-    time: "2025-07-11T00:26:35Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:metadata:
-            f:annotations:
-              .: {}
-              f:kubectl.kubernetes.io/restartedAt: {}
-    manager: kubectl-rollout
-    operation: Update
-    time: "2025-07-11T00:27:23Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          f:deployment.kubernetes.io/revision: {}
-      f:status:
-        f:availableReplicas: {}
-        f:conditions:
-          .: {}
-          k:{"type":"Available"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-          k:{"type":"Progressing"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-        f:observedGeneration: {}
-        f:readyReplicas: {}
-        f:replicas: {}
-        f:updatedReplicas: {}
-    manager: kube-controller-manager
-    operation: Update
-    subresource: status
-    time: "2025-07-11T00:27:31Z"
   name: accounts-api
   namespace: redops
-  resourceVersion: "51697105"
-  uid: 25e37017-84bd-4cdb-a853-8ee8baf38a29
+  labels:
+    app: accounts-api
 spec:
-  progressDeadlineSeconds: 600
   replicas: 1
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: accounts-api
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-    type: RollingUpdate
   template:
     metadata:
-      annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-07-11T05:57:23+05:30"
-      creationTimestamp: null
       labels:
         app: accounts-api
     spec:
       containers:
-      - env:
-        - name: ACCOUNTS_DB_URI
-          value: postgresql://accounts-admin:accounts-pwd@accounts-db.redops.svc.cluster.local:5432/accounts
-        - name: ENABLE_TRACING
-          value: "false"
-        - name: PORT
-          value: "8080"
-        - name: POSTGRESQL_DATABASE
-          value: accounts
-        - name: POSTGRESQL_PASSWORD
-          value: accounts-pwd
-        - name: POSTGRESQL_USER
-          value: accounts-admin
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        - name: BITNAMI_POSTGRESQL_DATA_DIR
-          value: /var/lib/postgresql/data
-        - name: TOKEN_EXPIRY_SECONDS
-          value: "3600"
-        - name: DISABLE_AUTH
-          value: "true"
-        - name: DEBUG_SLEEP
-          value: "1"
-        - name: PRIV_KEY_PATH
-          value: /app/secrets/private.pem
-        - name: PUB_KEY_PATH
-          value: /app/secrets/public.pem
-        image: image-registry.openshift-image-registry.svc:5000/redops/accounts-api:latest
-        imagePullPolicy: Always
-        name: accounts-api
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 300m
-            memory: 512Mi
-          requests:
-            cpu: 200m
-            memory: 200Mi
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /app/secrets
-          name: jwt-keys
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
+        - name: accounts-api
+          image: image-registry.openshift-image-registry.svc:5000/redops/accounts-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: ACCOUNTS_DB_URI
+              value: postgresql://accounts-admin:accounts-pwd@accounts-db.redops.svc.cluster.local:5432/accounts
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: PORT
+              value: "8080"
+            - name: POSTGRESQL_DATABASE
+              value: accounts
+            - name: POSTGRESQL_PASSWORD
+              value: accounts-pwd
+            - name: POSTGRESQL_USER
+              value: accounts-admin
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: BITNAMI_POSTGRESQL_DATA_DIR
+              value: /var/lib/postgresql/data
+            - name: TOKEN_EXPIRY_SECONDS
+              value: "3600"
+            - name: DISABLE_AUTH
+              value: "true"
+            - name: DEBUG_SLEEP
+              value: "1"
+            - name: PRIV_KEY_PATH
+              value: /app/secrets/private.pem
+            - name: PUB_KEY_PATH
+              value: /app/secrets/public.pem
+          resources:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: /app/secrets
+              name: jwt-keys
       volumes:
-      - name: jwt-keys
-        secret:
-          defaultMode: 420
-          secretName: userservice-jwt-keys
-status:
-  availableReplicas: 1
-  conditions:
-  - lastTransitionTime: "2025-07-11T00:26:42Z"
-    lastUpdateTime: "2025-07-11T00:26:42Z"
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: "True"
-    type: Available
-  - lastTransitionTime: "2025-07-04T23:13:15Z"
-    lastUpdateTime: "2025-07-11T00:27:31Z"
-    message: ReplicaSet "accounts-api-fd8b8f49" has successfully progressed.
-    reason: NewReplicaSetAvailable
-    status: "True"
-    type: Progressing
-  observedGeneration: 17
-  readyReplicas: 1
-  replicas: 1
-  updatedReplicas: 1
+        - name: jwt-keys
+          secret:
+            secretName: userservice-jwt-keys
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
