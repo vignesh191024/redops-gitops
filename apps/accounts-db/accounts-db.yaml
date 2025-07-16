@@ -40,4 +40,4 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: db-storage
-              mountPath
+              mountPath: /var/lib/postgresql/data
