@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"prometheus","namespace":"redops"},"spec":{"ports":[{"name":"web","port":9090,"targetPort":"web"}],"selector":{"app":"prometheus"}}}
+  creationTimestamp: "2025-07-05T18:12:53Z"
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+      f:spec:
+        f:internalTrafficPolicy: {}
+        f:ports:
+          .: {}
+          k:{"port":9090,"protocol":"TCP"}:
+            .: {}
+            f:name: {}
+            f:port: {}
+            f:protocol: {}
+        f:selector: {}
+        f:sessionAffinity: {}
+        f:type: {}
+    manager: kubectl-client-side-apply
+    operation: Update
+    time: "2025-07-05T18:12:53Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        f:ports:
+          k:{"port":9090,"protocol":"TCP"}:
+            f:targetPort: {}
+    manager: kubectl-patch
+    operation: Update
+    time: "2025-07-10T19:32:13Z"
+  name: prometheus
+  namespace: redops
+  resourceVersion: "50760303"
+  uid: a3957921-4521-4311-90b3-dd33d80f2b83
+spec:
+  clusterIP: 172.21.10.125
+  clusterIPs:
+  - 172.21.10.125
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: web
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app: prometheus
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,9 @@
+resources:
+  - frontend.yaml
+  - userservice.yaml
+  - accounts-api.yaml
+  - accounts-db.yaml
+  - prometheus-svc.yaml
+  - prometheus-route.yaml
+  - alerts/kafka.rules.yaml
+  - alerts/postgres.rules.yaml
