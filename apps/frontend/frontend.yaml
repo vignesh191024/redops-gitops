@@ -1,482 +1,127 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    deployment.kubernetes.io/revision: "123"
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"frontend"},"name":"frontend","namespace":"redops"},"spec":{"replicas":1,"revisionHistoryLimit":3,"selector":{"matchLabels":{"app":"frontend"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"kubectl.kubernetes.io/restartedAt":"2025-07-04T02:00:15+05:30"},"labels":{"app":"frontend"}},"spec":{"containers":[{"env":[{"name":"LEDGERWRITER_URL","value":"http://ledgerwriter:5678"},{"name":"PORT","value":"8080"},{"name":"PUB_KEY_PATH","value":"/keys/public.pem"},{"name":"ENABLE_TRACING","value":"false"},{"name":"USERSERVICE_URL","value":"http://userservice.redops.svc.cluster.local:8080"},{"name":"USERSERVICE_ADDR","value":"userservice.redops.svc.cluster.local:8080"},{"name":"USER_SERVICE_ADDR","value":"userservice.redops.svc.cluster.local:8080"},{"name":"USERSERVICE_API_ADDR","value":"userservice.redops.svc.cluster.local:8080"},{"name":"ACCOUNTS_API_ADDR","value":"http://accounts-bundle:8080"},{"name":"GUNICORN_CMD_ARGS","value":"--access-logfile -"},{"name":"ENV_PLATFORM","value":"onprem"}],"image":"image-registry.openshift-image-registry.svc:5000/redops/frontend:latest","imagePullPolicy":"IfNotPresent","name":"frontend","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{"limits":{"cpu":"500m","memory":"500Mi"},"requests":{"cpu":"200m","memory":"200Mi"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/certs","name":"certs"},{"mountPath":"/var/lib/nginx","name":"nginx-tmp"},{"mountPath":"/var/cache/nginx","name":"nginx-cache"},{"mountPath":"/var/run","name":"nginx-run"},{"mountPath":"/keys","name":"jwt-key","readOnly":true}]}],"dnsPolicy":"ClusterFirst","imagePullSecrets":[{"name":"ghcr-secret"},{"name":"default-dockercfg-6c8rb"}],"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{"fsGroup":1001060000},"terminationGracePeriodSeconds":30,"volumes":[{"emptyDir":{},"name":"certs"},{"emptyDir":{},"name":"nginx-tmp"},{"emptyDir":{},"name":"nginx-cache"},{"emptyDir":{},"name":"nginx-run"},{"configMap":{"defaultMode":420,"name":"jwt-public-key"},"name":"jwt-key"}]}}}}
-  creationTimestamp: "2025-07-02T17:21:26Z"
-  generation: 216
-  labels:
-    app: frontend
-  managedFields:
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:spec:
-            f:containers:
-              k:{"name":"frontend"}:
-                f:volumeMounts:
-                  .: {}
-                  k:{"mountPath":"/certs"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-                  k:{"mountPath":"/var/cache/nginx"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-                  k:{"mountPath":"/var/lib/nginx"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-                  k:{"mountPath":"/var/run"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-            f:volumes:
-              .: {}
-              k:{"name":"certs"}:
-                .: {}
-                f:emptyDir: {}
-                f:name: {}
-              k:{"name":"nginx-cache"}:
-                .: {}
-                f:emptyDir: {}
-                f:name: {}
-              k:{"name":"nginx-run"}:
-                .: {}
-                f:emptyDir: {}
-                f:name: {}
-              k:{"name":"nginx-tmp"}:
-                .: {}
-                f:emptyDir: {}
-                f:name: {}
-    manager: oc
-    operation: Update
-    time: "2025-07-02T18:39:56Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:kubectl.kubernetes.io/last-applied-configuration: {}
-        f:labels:
-          .: {}
-          f:app: {}
-      f:spec:
-        f:progressDeadlineSeconds: {}
-        f:revisionHistoryLimit: {}
-        f:selector: {}
-        f:strategy:
-          f:rollingUpdate:
-            .: {}
-            f:maxSurge: {}
-            f:maxUnavailable: {}
-          f:type: {}
-        f:template:
-          f:metadata:
-            f:labels:
-              .: {}
-              f:app: {}
-          f:spec:
-            f:containers:
-              k:{"name":"frontend"}:
-                .: {}
-                f:env:
-                  k:{"name":"ENV_PLATFORM"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                f:imagePullPolicy: {}
-                f:name: {}
-                f:ports:
-                  .: {}
-                  k:{"containerPort":8080,"protocol":"TCP"}:
-                    .: {}
-                    f:containerPort: {}
-                    f:protocol: {}
-                f:resources:
-                  .: {}
-                  f:limits:
-                    .: {}
-                    f:cpu: {}
-                    f:memory: {}
-                  f:requests:
-                    .: {}
-                    f:cpu: {}
-                    f:memory: {}
-                f:terminationMessagePath: {}
-                f:terminationMessagePolicy: {}
-            f:dnsPolicy: {}
-            f:restartPolicy: {}
-            f:schedulerName: {}
-            f:securityContext: {}
-            f:terminationGracePeriodSeconds: {}
-    manager: kubectl-client-side-apply
-    operation: Update
-    time: "2025-07-04T20:50:17Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:spec:
-            f:containers:
-              k:{"name":"frontend"}:
-                f:env:
-                  k:{"name":"PUBLIC_KEY_PATH"}:
-                    f:value: {}
-    manager: kubectl-edit
-    operation: Update
-    time: "2025-07-05T11:26:04Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:spec:
-            f:containers:
-              k:{"name":"frontend"}:
-                f:env:
-                  .: {}
-                  k:{"name":"ACCOUNTS_API_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"ACCOUNTS_API_URL"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"BALANCES_API_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"CONTACTS_API_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"ENABLE_TRACING"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"GUNICORN_CMD_ARGS"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"HISTORY_API_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"JWT_SECRET"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"LEDGERWRITER_URL"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"PORT"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"PUB_KEY_PATH"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"PUBLIC_KEY_PATH"}:
-                    .: {}
-                    f:name: {}
-                  k:{"name":"TOKEN_NAME"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"TRANSACTIONS_API_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"USER_SERVICE_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"USERSERVICE_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"USERSERVICE_API_ADDR"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"USERSERVICE_URL"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-    manager: oc.exe
-    operation: Update
-    time: "2025-07-11T18:00:25Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:spec:
-            f:containers:
-              k:{"name":"frontend"}:
-                f:image: {}
-    manager: kubectl-set
-    operation: Update
-    time: "2025-07-15T16:01:35Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:metadata:
-            f:annotations:
-              .: {}
-              f:kubectl.kubernetes.io/restartedAt: {}
-    manager: kubectl-rollout
-    operation: Update
-    time: "2025-07-15T16:43:10Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        f:template:
-          f:spec:
-            f:containers:
-              k:{"name":"frontend"}:
-                f:volumeMounts:
-                  k:{"mountPath":"/app/static/scripts/login.js"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-                    f:subPath: {}
-                  k:{"mountPath":"/app/static/scripts/signup.js"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-                    f:subPath: {}
-                  k:{"mountPath":"/keys"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-                    f:readOnly: {}
-            f:imagePullSecrets:
-              .: {}
-              k:{"name":"default-dockercfg-6c8rb"}: {}
-              k:{"name":"ghcr-secret"}: {}
-            f:securityContext:
-              f:fsGroup: {}
-            f:volumes:
-              k:{"name":"jwt-key"}:
-                .: {}
-                f:configMap:
-                  .: {}
-                  f:defaultMode: {}
-                  f:name: {}
-                f:name: {}
-              k:{"name":"login-js-volume"}:
-                .: {}
-                f:configMap:
-                  .: {}
-                  f:defaultMode: {}
-                  f:items: {}
-                  f:name: {}
-                f:name: {}
-              k:{"name":"signup-js-override"}:
-                .: {}
-                f:configMap:
-                  .: {}
-                  f:defaultMode: {}
-                  f:name: {}
-                f:name: {}
-    manager: kubectl-patch
-    operation: Update
-    time: "2025-07-15T17:28:32Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          f:deployment.kubernetes.io/revision: {}
-      f:status:
-        f:availableReplicas: {}
-        f:conditions:
-          .: {}
-          k:{"type":"Available"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-          k:{"type":"Progressing"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-        f:observedGeneration: {}
-        f:readyReplicas: {}
-        f:replicas: {}
-        f:updatedReplicas: {}
-    manager: kube-controller-manager
-    operation: Update
-    subresource: status
-    time: "2025-07-15T17:52:26Z"
   name: frontend
   namespace: redops
-  resourceVersion: "73146594"
-  uid: 4ac43eda-b3eb-4e18-89bf-e5285b1ed593
+  labels:
+    app: frontend
 spec:
-  progressDeadlineSeconds: 600
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: frontend
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-    type: RollingUpdate
   template:
     metadata:
-      annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-07-15T22:13:09+05:30"
-      creationTimestamp: null
       labels:
         app: frontend
     spec:
       containers:
-      - env:
-        - name: LEDGERWRITER_URL
-          value: http://ledgerwriter:5678
-        - name: PORT
-          value: "8080"
-        - name: PUB_KEY_PATH
-          value: /keys/public.pem
-        - name: ENABLE_TRACING
-          value: "false"
-        - name: USERSERVICE_URL
-          value: http://userservice.redops.svc.cluster.local:8080
-        - name: USERSERVICE_ADDR
-          value: userservice.redops.svc.cluster.local:8080
-        - name: USER_SERVICE_ADDR
-          value: userservice.redops.svc.cluster.local:8080
-        - name: USERSERVICE_API_ADDR
-          value: userservice:8080
-        - name: ACCOUNTS_API_ADDR
-          value: http://accounts-bundle:8080
-        - name: GUNICORN_CMD_ARGS
-          value: --access-logfile -
-        - name: ENV_PLATFORM
-          value: onprem
-        - name: JWT_SECRET
-          value: your-secret-value
-        - name: PUBLIC_KEY_PATH
-          value: /keys/public.pem
-        - name: TRANSACTIONS_API_ADDR
-          value: transactions-api
-        - name: BALANCES_API_ADDR
-          value: accounts-api:8080
-        - name: HISTORY_API_ADDR
-          value: http://accounts-api:8080
-        - name: CONTACTS_API_ADDR
-          value: http://accounts-api:8080
-        - name: TOKEN_NAME
-          value: token
-        - name: ACCOUNTS_API_URL
-          value: http://accounts-api:8080
-        image: image-registry.openshift-image-registry.svc:5000/redops/frontend@sha256:e896fe2a47d4d59c8175faa62ec8e6c65d9a441635d79b33b30277e34346f12e
-        imagePullPolicy: IfNotPresent
-        name: frontend
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 500m
-            memory: 500Mi
-          requests:
-            cpu: 200m
-            memory: 200Mi
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /app/static/scripts/signup.js
-          name: signup-js-override
-          subPath: signup.override.js
-        - mountPath: /certs
-          name: certs
-        - mountPath: /var/lib/nginx
-          name: nginx-tmp
-        - mountPath: /var/cache/nginx
-          name: nginx-cache
-        - mountPath: /var/run
-          name: nginx-run
-        - mountPath: /keys
-          name: jwt-key
-          readOnly: true
-        - mountPath: /app/static/scripts/login.js
-          name: login-js-volume
-          subPath: login.js
-      dnsPolicy: ClusterFirst
+        - name: frontend
+          image: image-registry.openshift-image-registry.svc:5000/redops/frontend:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LEDGERWRITER_URL
+              value: http://ledgerwriter:5678
+            - name: PORT
+              value: "8080"
+            - name: PUB_KEY_PATH
+              value: /keys/public.pem
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: USERSERVICE_URL
+              value: http://userservice.redops.svc.cluster.local:8080
+            - name: USERSERVICE_ADDR
+              value: userservice.redops.svc.cluster.local:8080
+            - name: USER_SERVICE_ADDR
+              value: userservice.redops.svc.cluster.local:8080
+            - name: USERSERVICE_API_ADDR
+              value: userservice:8080
+            - name: ACCOUNTS_API_ADDR
+              value: http://accounts-bundle:8080
+            - name: ACCOUNTS_API_URL
+              value: http://accounts-api:8080
+            - name: JWT_SECRET
+              value: your-secret-value
+            - name: PUBLIC_KEY_PATH
+              value: /keys/public.pem
+            - name: TRANSACTIONS_API_ADDR
+              value: transactions-api
+            - name: BALANCES_API_ADDR
+              value: accounts-api:8080
+            - name: HISTORY_API_ADDR
+              value: http://accounts-api:8080
+            - name: CONTACTS_API_ADDR
+              value: http://accounts-api:8080
+            - name: TOKEN_NAME
+              value: token
+            - name: GUNICORN_CMD_ARGS
+              value: --access-logfile -
+            - name: ENV_PLATFORM
+              value: onprem
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: signup-js-override
+              mountPath: /app/static/scripts/signup.js
+              subPath: signup.override.js
+            - name: login-js-volume
+              mountPath: /app/static/scripts/login.js
+              subPath: login.js
+            - name: certs
+              mountPath: /certs
+            - name: nginx-tmp
+              mountPath: /var/lib/nginx
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: jwt-key
+              mountPath: /keys
+              readOnly: true
+      volumes:
+        - name: signup-js-override
+          configMap:
+            name: signup-js-override
+            defaultMode: 420
+        - name: login-js-volume
+          configMap:
+            name: login-js-override
+            defaultMode: 420
+            items:
+              - key: login.override.js
+                path: login.js
+        - name: certs
+          emptyDir: {}
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: jwt-key
+          configMap:
+            name: jwt-public-key
+            defaultMode: 420
       imagePullSecrets:
-      - name: ghcr-secret
-      - name: default-dockercfg-6c8rb
+        - name: ghcr-secret
+        - name: default-dockercfg-6c8rb
       restartPolicy: Always
+      dnsPolicy: ClusterFirst
+      terminationGracePeriodSeconds: 30
       schedulerName: default-scheduler
       securityContext:
         fsGroup: 1001060000
-      terminationGracePeriodSeconds: 30
-      volumes:
-      - configMap:
-          defaultMode: 420
-          name: signup-js-override
-        name: signup-js-override
-      - emptyDir: {}
-        name: certs
-      - emptyDir: {}
-        name: nginx-tmp
-      - emptyDir: {}
-        name: nginx-cache
-      - emptyDir: {}
-        name: nginx-run
-      - configMap:
-          defaultMode: 420
-          name: jwt-public-key
-        name: jwt-key
-      - configMap:
-          defaultMode: 420
-          items:
-          - key: login.override.js
-            path: login.js
-          name: login-js-override
-        name: login-js-volume
-status:
-  availableReplicas: 1
-  conditions:
-  - lastTransitionTime: "2025-07-05T08:30:58Z"
-    lastUpdateTime: "2025-07-15T17:28:38Z"
-    message: ReplicaSet "frontend-c9cf7d555" has successfully progressed.
-    reason: NewReplicaSetAvailable
-    status: "True"
-    type: Progressing
-  - lastTransitionTime: "2025-07-15T17:52:26Z"
-    lastUpdateTime: "2025-07-15T17:52:26Z"
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: "True"
-    type: Available
-  observedGeneration: 216
-  readyReplicas: 1
-  replicas: 1
-  updatedReplicas: 1
