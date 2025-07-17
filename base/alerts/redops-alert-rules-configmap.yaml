@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alert-rules
+  namespace: redops
+labels:
+  prometheus: redops
+data:
+  redops-rules.yaml: |
+    groups:
+    - name: kafkapod.rules
+      rules:
+      - alert: KafkaPodDown
+        expr: absent(up{job="kafka"} == 1)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka pod is down"
+          description: "Prometheus has not detected the kafka pod as up for more than 1 minute."
+
+    - name: postgres.rules
+      rules:
+      - alert: PostgreSQLDown
+        expr: absent(up{job="postgres"} == 1)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "Prometheus has not detected the PostgreSQL service as up for more than 1 minute."
+
+    - name: frontend.rules
+      rules:
+      - alert: FrontendDown
+        expr: absent(up{job="frontend"} == 1)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Frontend service is down"
+          description: "Prometheus has not detected the frontend service as up for more than 1 minute."
+
+    - name: accountsapi.rules
+      rules:
+      - alert: AccountsAPIDown
+        expr: absent(up{job="accounts-api"} == 1)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Accounts API is down"
+          description: "Prometheus has not detected the accounts-api service as up for more than 1 minute."
+
+    - name: userservice.rules
+      rules:
+      - alert: UserServiceDown
+        expr: absent(up{job="userservice"} == 1)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "User Service is down"
+          description: "Prometheus has not detected the userservice as up for more than 1 minute."
