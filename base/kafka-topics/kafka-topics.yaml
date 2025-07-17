@@ -1,0 +1,22 @@
+# kafka-topics.yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: alerts-infra
+  namespace: redops
+  labels:
+    strimzi.io/cluster: redops-kafka
+spec:
+  partitions: 1
+  replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: ai.analysis.output
+  namespace: redops
+  labels:
+    strimzi.io/cluster: redops-kafka
+spec:
+  partitions: 1
+  replicas: 1
