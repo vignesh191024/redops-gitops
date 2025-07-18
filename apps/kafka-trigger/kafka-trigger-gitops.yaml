@@ -1,61 +1,3 @@
----
-# 1. ConfigMap with Python Kafka Consumer Script
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kafka-trigger-script
-  namespace: redops
-data:
-  consumer.py: |
-    from kafka import KafkaConsumer
-    import json, requests
-
-    print("🚀 Starting Kafka consumer...")
-    consumer = KafkaConsumer(
-        'alerts-infra',
-        bootstrap_servers='redops-kafka-kafka-bootstrap.redops.svc:9092',
-        auto_offset_reset='earliest',
-        group_id='tekton-trigger-group',
-        value_deserializer=lambda m: json.loads(m.decode('utf-8'))
-    )
-
-    for message in consumer:
-        alert = message.value
-        print("🔥 Alert received:", alert)
-
-        payload = {
-            "apiVersion": "tekton.dev/v1",
-            "kind": "PipelineRun",
-            "metadata": {
-                "generateName": "ai-automation-from-kafka-",
-                "namespace": "redops"
-            },
-            "spec": {
-                "pipelineRef": {
-                    "name": "ai-automation-pipeline"
-                },
-                "params": [
-                    {
-                        "name": "alert-payload",
-                        "value": json.dumps(alert)
-                    }
-                ]
-            }
-        }
-
-        print("🚀 Triggering Tekton PipelineRun...")
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(
-            "https://kubernetes.default.svc/apis/tekton.dev/v1/namespaces/redops/pipelineruns",
-            headers=headers,
-            data=json.dumps(payload),
-            verify=False,
-            timeout=10
-        )
-        print("✅ PipelineRun status:", response.status_code)
-
----
-# 2. Kafka Trigger Deployment (Runs the Python Kafka Consumer)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -73,13 +15,7 @@ spec:
     spec:
       containers:
         - name: kafka-trigger
-          image: python:3.10
-          command: ["python3", "-u", "consumer.py"]
-          volumeMounts:
-            - name: script
-              mountPath: /app
-          workingDir: /app
-      volumes:
-        - name: script
-          configMap:
-            name: kafka-trigger-script
+          image: image-registry.openshift-image-registry.svc:5000/redops/kafka-trigger:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
