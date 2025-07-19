@@ -13,9 +13,19 @@ spec:
       labels:
         app: kafka-trigger
     spec:
+      serviceAccountName: pipeline  # Needed to trigger Tekton Pipeline
       containers:
         - name: kafka-trigger
           image: image-registry.openshift-image-registry.svc:5000/redops/kafka-trigger:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          env:
+            - name: PIPELINE_NAME
+              value: "ai-automation-pipeline"
+            - name: PIPELINE_NAMESPACE
+              value: "redops"
+            - name: KAFKA_TOPIC
+              value: "alerts-infra"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "redops-kafka-kafka-bootstrap.redops.svc:9092"
