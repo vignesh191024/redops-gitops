@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-metrics
+  namespace: redops
+  labels:
+    app: kafka-jmx-exporter
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: kafka-jmx-exporter
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-jmx-exporter
+  namespace: redops
+  labels:
+    app: kafka-jmx-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-jmx-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-jmx-exporter
+    spec:
+      containers:
+        - name: kafka-jmx-exporter
+          image: bitnami/jmx-exporter:latest
+          args:
+            - "8080"
+            - "/etc/jmx-exporter/config.yaml"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /etc/jmx-exporter
+              readOnly: true
+      volumes:
+        - name: jmx-config
+          configMap:
+            name: kafka-jmx-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-jmx-config
+  namespace: redops
+data:
+  config.yaml: |
+    hostPort: kafka.redops.svc.cluster.local:9999
+    lowercaseOutputName: true
+    rules:
+      - pattern: "kafka.server<type=(.+), name=(.+)PerSec, .*><>Count"
+        name: "kafka_server_$1_$2_total"
+        type: COUNTER
+        labels:
+          clientId: "$3"
+      - pattern: "kafka.server<type=(.+), name=(.+)><>Value"
+        name: "kafka_server_$1_$2"
+        type: GAUGE
+      - pattern: ".*"
+        name: "unmatched"

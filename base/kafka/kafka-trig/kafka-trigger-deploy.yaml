@@ -1,0 +1,160 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-trigger-config
+  namespace: redops
+data:
+  config.json: |
+    {
+      "kafka": {
+        "bootstrap_servers": "redops-kafka-kafka-bootstrap.redops.svc:9092",
+        "topic": "alerts-infra",
+        "group_id": "ai-trigger-group"
+      },
+      "tekton": {
+        "namespace": "redops",
+        "pipeline_name": "ai-automation-pipeline",
+        "params_from_alert": ["alertname", "severity", "summary", "description"]
+      }
+    }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kafka-trigger-sa
+  namespace: redops
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: redops
+  name: kafka-trigger-role
+rules:
+- apiGroups: ["tekton.dev"]
+  resources: ["pipelineruns"]
+  verbs: ["create", "get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kafka-trigger-rb
+  namespace: redops
+subjects:
+- kind: ServiceAccount
+  name: kafka-trigger-sa
+  namespace: redops
+roleRef:
+  kind: Role
+  name: kafka-trigger-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-trigger
+  namespace: redops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-trigger
+  template:
+    metadata:
+      labels:
+        app: kafka-trigger
+    spec:
+      serviceAccountName: kafka-trigger-sa
+      containers:
+        - name: kafka-trigger
+          image: python:3.10-slim
+          command: [ "python" ]
+          args: [ "/app/trigger.py" ]
+          volumeMounts:
+            - name: trigger-code
+              mountPath: /app
+            - name: config-volume
+              mountPath: /app/config
+          env:
+            - name: KUBERNETES_SERVICE_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+      volumes:
+        - name: trigger-code
+          configMap:
+            name: kafka-trigger-script
+        - name: config-volume
+          configMap:
+            name: kafka-trigger-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-trigger-script
+  namespace: redops
+data:
+  trigger.py: |
+    import json
+    import os
+    from kafka import KafkaConsumer
+    from kubernetes import client, config
+
+    config.load_incluster_config()
+
+    # Load config
+    with open('/app/config/config.json') as f:
+        cfg = json.load(f)
+
+    consumer = KafkaConsumer(
+        cfg["kafka"]["topic"],
+        bootstrap_servers=cfg["kafka"]["bootstrap_servers"],
+        group_id=cfg["kafka"]["group_id"],
+        value_deserializer=lambda m: json.loads(m.decode('utf-8'))
+    )
+
+    v1 = client.CustomObjectsApi()
+
+    for msg in consumer:
+        payload = msg.value
+        print("Received alert:", payload)
+
+        params = []
+        for key in cfg["tekton"]["params_from_alert"]:
+            value = payload.get(key) or payload.get('labels', {}).get(key) or payload.get('annotations', {}).get(key)
+            if value:
+                params.append({
+                    "name": key,
+                    "value": str(value)
+                })
+
+        body = {
+            "apiVersion": "tekton.dev/v1beta1",
+            "kind": "PipelineRun",
+            "metadata": {
+                "generateName": "ai-run-"
+            },
+            "spec": {
+                "pipelineRef": {
+                    "name": cfg["tekton"]["pipeline_name"]
+                },
+                "params": params,
+                "workspaces": [
+                    {
+                        "name": "shared-data",
+                        "emptyDir": {}
+                    }
+                ]
+            }
+        }
+
+        try:
+            v1.create_namespaced_custom_object(
+                group="tekton.dev",
+                version="v1beta1",
+                namespace=cfg["tekton"]["namespace"],
+                plural="pipelineruns",
+                body=body
+            )
+            print("Pipeline triggered successfully.")
+        except Exception as e:
+            print("Failed to start pipeline:", e)

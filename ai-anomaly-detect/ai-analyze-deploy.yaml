@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-analyze
+  namespace: redops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-analyze
+  template:
+    metadata:
+      labels:
+        app: ai-analyze
+    spec:
+      containers:
+        - name: ai-analyze
+          image: image-registry.openshift-image-registry.svc:5000/redops/ai-analyze:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-analyze
+  namespace: redops
+spec:
+  selector:
+    app: ai-analyze
+  ports:
+    - port: 80
+      targetPort: 5000
+      protocol: TCP

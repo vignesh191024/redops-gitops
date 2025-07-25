@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ai-analyze
+  namespace: redops
+spec:
+  to:
+    kind: Service
+    name: ai-analyze
+  port:
+    targetPort: 5000
+  tls:
+    termination: edge

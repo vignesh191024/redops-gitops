@@ -1,0 +1,19 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: redmodel
+  namespace: redops
+spec:
+  predictor:
+    sklearn:
+      storageUri: "file:///mnt/persistent"
+    containers:
+    - name: kserve-container
+      image: kserve/sklearnserver:latest
+      volumeMounts:
+        - mountPath: /mnt/persistent
+          name: model-storage
+  volumes:
+    - name: model-storage
+      persistentVolumeClaim:
+        claimName: ai-anomaly-detect

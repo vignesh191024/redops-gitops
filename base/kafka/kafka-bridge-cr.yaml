@@ -1,0 +1,11 @@
+# kafka-bridge-cr.yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaBridge
+metadata:
+  name: redops-kafka-console
+  namespace: redops
+spec:
+  replicas: 1
+  bootstrapServers: redops-kafka-kafka-bootstrap:9092
+  http:
+    port: 8080

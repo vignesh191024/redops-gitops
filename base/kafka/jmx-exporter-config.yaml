@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jmx-exporter-config
+  namespace: redops
+data:
+  config.yaml: |
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    rules:
+      - pattern: "kafka.server<type=(.+), name=(.+)PerSec\\w*><>Count"
+        name: kafka_$1_$2_total
+        type: COUNTER
+        help: "Kafka metric $1 $2"

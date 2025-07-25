@@ -1,0 +1,6 @@
+# ai-analyze-imagestream.yaml
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: ai-analyze
+  namespace: redops

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: redops
+data:
+  resource.customizations: |
+    apps/Deployment:
+      ignoreDifferences:
+        jsonPointers:
+        - /spec/template/spec/containers/1

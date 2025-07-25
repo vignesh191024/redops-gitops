@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: redops
+  labels:
+    prometheus: redops
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              - alertmanager.redops.svc:9093
+
+    rule_files:
+      - /etc/prometheus/rules/*.yaml
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      - job_name: 'kafka-jmx'
+        static_configs:
+          - targets: ['kafka-jmx-exporter.redops.svc:9404']
+
+      - job_name: 'accounts-db'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: ['redops']
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: accounts-db
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: $1:9187  # assuming postgres_exporter runs on 9187
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+      - job_name: 'frontend'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: ['redops']
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: frontend
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: $1:8080
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+      - job_name: 'accounts-api'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: ['redops']
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: accounts-api
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: $1:8080
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+      - job_name: 'userservice'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: ['redops']
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: userservice
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: $1:8080
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+

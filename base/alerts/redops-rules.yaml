@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alert-rules
+  namespace: redops
+  labels:
+    prometheus: redops
+data:
+  redops-rules.yaml: |
+    groups:
+    - name: kafka.rules
+      rules:
+      - alert: KafkaBrokerDown
+        expr: up{job="kafka-jmx", pod=~".*kafka.*"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka Broker is down"
+          description: "Kafka JMX Exporter is not responding for over 30 seconds."
+          pod: "{{ $labels.pod }}"
+
+      - alert: KafkaOfflinePartitions
+        expr: kafka_server_replicamanager_offlinepartitionscount > 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kafka has offline partitions"
+          description: "One or more Kafka partitions are offline."
+          pod: "{{ $labels.pod }}"
+
+      - alert: KafkaUnderReplicatedPartitions
+        expr: kafka_server_replicamanager_underreplicatedpartitions > 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kafka has under-replicated partitions"
+          description: "Kafka partitions are under-replicated."
+          pod: "{{ $labels.pod }}"
+
+      - alert: KafkaHighRequestRate
+        expr: rate(kafka_network_requestmetrics_requests_total[1m]) > 500
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kafka high request rate"
+          description: "Kafka is receiving more than 500 requests/sec."
+          pod: "{{ $labels.pod }}"
+
+    - name: postgres.rules
+      rules:
+      - alert: PostgreSQLDown
+        expr: absent(up{pod=~"accounts-db.*"} == 1)
+        for: 30s
+        labels:
+          severity: critical
+          pod: account-db
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "Prometheus has not detected the PostgreSQL service as up."
+
+    - name: frontend.rules
+      rules:
+      - alert: FrontendDown
+        expr: absent(up{pod=~"frontend.*"} == 1)
+        for: 30s
+        labels:
+          severity: critical
+          pod: frontend
+        annotations:
+          summary: "Frontend service is down"
+          description: "Prometheus has not detected the frontend service as up."
+
+    - name: accountsapi.rules
+      rules:
+      - alert: AccountsAPIDown
+        expr: absent(up{pod=~"accounts-api.*"} == 1)
+        for: 30s
+        labels:
+          severity: critical
+          pod: accounts-api
+        annotations:
+          summary: "Accounts API is down"
+          description: "Prometheus has not detected the accounts-api service as up."
+
+    - name: userservice.rules
+      rules:
+      - alert: UserServiceDown
+        expr: absent(up{pod=~"userservice.*"} == 1)
+        for: 30s
+        labels:
+          severity: critical
+          pod: userservice
+        annotations:
+          summary: "User Service is down"
+          description: "Prometheus has not detected the userservice service as up."

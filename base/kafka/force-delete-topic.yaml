@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: force-delete-alerts-infra
+  namespace: redops
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka-admin
+        image: quay.io/strimzi/kafka:0.39.0-kafka-3.6.1
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Attempting to delete topic alerts-infra..."
+          bin/kafka-topics.sh \
+            --bootstrap-server redops-kafka-kafka-bootstrap:9092 \
+            --delete \
+            --topic alerts-infra
+        resources: {}
+      restartPolicy: Never
+  backoffLimit: 1

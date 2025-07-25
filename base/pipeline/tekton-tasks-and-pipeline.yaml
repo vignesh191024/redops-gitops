@@ -1,0 +1,160 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: analyze-task
+  namespace: redops
+spec:
+  params:
+    - name: pod_name
+      type: string
+  steps:
+    - name: analyze
+      image: python:3.11
+      script: |
+        #!/usr/bin/env python3
+        import os
+        import json
+        import requests
+
+        alert_path = "/workspace/alert/alert.json"
+        if not os.path.exists(alert_path):
+            print("Alert file not found!")
+            exit(1)
+
+        with open(alert_path, "r") as f:
+            alert_data = json.load(f)
+
+        pod_name = alert_data.get("pod", "unknown")
+        print(f"Analyzing pod: {pod_name}")
+
+        # Dummy logic to fail for db pods
+        if "db" in pod_name:
+            print("Detected high risk pod, marking as fail.")
+            exit(1)
+        else:
+            print("Pod seems okay.")
+
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: act-task
+  namespace: redops
+spec:
+  workspaces:
+    - name: output
+  steps:
+    - name: restart-or-escalate
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      script: |
+        #!/bin/bash
+        set -e
+
+        POD_NAME=$(cat /workspace/output/pod.txt)
+        echo "Checking for pod: $POD_NAME"
+
+        # Check if the pod exists
+        if ! oc get pod "$POD_NAME" -n redops >/dev/null 2>&1; then
+          echo "Pod $POD_NAME not found. Attempting to restart the deployment."
+
+          DEPLOY_NAME=$(echo "$POD_NAME" | sed 's/-[a-z0-9]\{9,\}$//')
+          echo "Assuming deployment is: $DEPLOY_NAME"
+
+          oc rollout restart deployment "$DEPLOY_NAME" -n redops
+          echo "Waiting for deployment spec update to be observed..."
+          oc rollout status deployment "$DEPLOY_NAME" -n redops --timeout=60s || true
+
+          echo "Waiting for new pod from deployment: $DEPLOY_NAME"
+          READY_POD=$(oc get pods -n redops -l app=$DEPLOY_NAME -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}' | grep -v "$POD_NAME" || true)
+
+          if [[ -z "$READY_POD" ]]; then
+            echo "No new pod became ready. Escalating..."
+            echo "$POD_NAME" > /workspace/output/escalate.txt
+          else
+            echo "New pod is up: $READY_POD"
+          fi
+        else
+          echo "Pod $POD_NAME exists. Trying direct restart..."
+          oc delete pod "$POD_NAME" -n redops
+        fi
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: escalate-task
+  namespace: redops
+spec:
+  params:
+    - name: pod_name
+      type: string
+  steps:
+    - name: escalate
+      image: curlimages/curl:latest
+      script: |
+        #!/bin/bash
+        set -e
+
+        POD_NAME="$(params.pod_name)"
+        echo "Checking if pod '$POD_NAME' is still down..."
+
+        sleep 10
+
+        POD_STATUS=$(oc get pod "$POD_NAME" -n redops -o jsonpath='{.status.containerStatuses[0].ready}' 2>/dev/null || echo "notfound")
+
+        if [ "$POD_STATUS" == "true" ]; then
+            echo "✅ Pod '$POD_NAME' is running. Skipping escalation."
+            exit 0
+        else
+            echo "❌ Pod '$POD_NAME' still not ready. Escalating to ServiceNow..."
+
+            curl -X POST "https://dev318488.service-now.com/api/now/table/incident" \
+                --user 'aes.creator:f0rdEh-A-M5U.' \
+                -H "Content-Type: application/json" \
+                -d "{
+                      \"short_description\": \"Restarted the services but still down - $POD_NAME\",
+                      \"description\": \"Automated escalation by Tekton pipeline after restart failed\"
+                    }"
+
+            echo "🚨 Escalation done."
+            exit 0
+        fi
+
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: ai-automation-pipeline
+  namespace: redops
+spec:
+  params:
+    - name: pod_name
+      type: string
+
+  tasks:
+    - name: analyze
+      taskRef:
+        name: analyze-task
+      params:
+        - name: pod_name
+          value: $(params.pod_name)
+
+    - name: act
+      runAfter:
+        - analyze
+      taskRef:
+        name: act-task
+      params:
+        - name: pod_name
+          value: $(params.pod_name)
+
+    - name: escalate
+      runAfter:
+        - act
+      taskRef:
+        name: escalate-task
+      params:
+        - name: pod_name
+          value: $(params.pod_name)
+

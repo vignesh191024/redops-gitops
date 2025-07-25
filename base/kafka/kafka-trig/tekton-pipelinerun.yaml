@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: ai-automation-run
+  namespace: redops
+spec:
+  pipelineRef:
+    name: ai-automation-pipeline

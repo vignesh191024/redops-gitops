@@ -1,0 +1,23 @@
+# alert-translator-is-and-bc.yaml
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: alert-translator
+  namespace: redops
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: alert-translator
+  namespace: redops
+spec:
+  runPolicy: Serial
+  source:
+    type: Binary
+  strategy:
+    type: Docker
+    dockerStrategy: {}
+  output:
+    to:
+      kind: ImageStreamTag
+      name: alert-translator:latest

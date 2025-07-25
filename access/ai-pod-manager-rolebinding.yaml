@@ -1,0 +1,14 @@
+# file: ai-pod-manager-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ai-pod-manager-binding
+  namespace: redops
+subjects:
+- kind: ServiceAccount
+  name: ai-anomaly-detect
+  namespace: redops
+roleRef:
+  kind: Role
+  name: pod-manager
+  apiGroup: rbac.authorization.k8s.io

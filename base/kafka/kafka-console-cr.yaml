@@ -1,0 +1,11 @@
+# kafka-console-cr.yaml
+apiVersion: console.strimzi.io/v1alpha1
+kind: KafkaConsole
+metadata:
+  name: redops-kafka-console
+  namespace: redops
+spec:
+  bootstrapServers: redops-kafka-kafka-bootstrap:9092
+  replicas: 1
+  authentication:
+    type: none

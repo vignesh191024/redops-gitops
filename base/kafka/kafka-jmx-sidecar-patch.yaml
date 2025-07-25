@@ -1,0 +1,19 @@
+spec:
+  kafka:
+    template:
+      pod:
+        containers:
+          - name: jmx-exporter
+            image: image-registry.openshift-image-registry.svc:5000/redops/jmx-exporter
+            imagePullPolicy: IfNotPresent
+            ports:
+              - containerPort: 9404
+                name: jmx
+                protocol: TCP
+            volumeMounts:
+              - name: jmx-config
+                mountPath: /etc/jmx-exporter
+        volumes:
+          - name: jmx-config
+            configMap:
+              name: kafka-configmap

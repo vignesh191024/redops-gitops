@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts-db
+  namespace: redops
+  labels:
+    app: accounts-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accounts-db
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: accounts-db
+    spec:
+      containers:
+        - name: postgres
+          image: bitnami/postgresql:16
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRESQL_DATABASE
+              value: accounts
+            - name: POSTGRESQL_USER
+              value: accounts-admin
+            - name: POSTGRESQL_PASSWORD
+              value: accounts-pwd
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: BITNAMI_POSTGRESQL_DATA_DIR
+              value: /var/lib/postgresql/data
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data

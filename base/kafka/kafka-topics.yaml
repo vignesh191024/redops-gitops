@@ -1,0 +1,23 @@
+  # alerts-infra topic (alerts from Prometheus or manual producers)
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: alerts-infra
+  namespace: redops
+  labels:
+    strimzi.io/cluster: redops-kafka
+spec:
+  partitions: 3
+  replicas: 1
+---
+# ai.analysis.output topic (AI model output: "restart", "escalate", etc.)
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: ai.analysis.output
+  namespace: redops
+  labels:
+    strimzi.io/cluster: redops-kafka
+spec:
+  partitions: 1
+  replicas: 1

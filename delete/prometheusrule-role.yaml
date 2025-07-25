@@ -1,0 +1,24 @@
+# prometheusrule-role.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: redops
+  name: prometheus-rule-manager
+rules:
+- apiGroups: ["monitoring.coreos.com"]
+  resources: ["prometheusrules"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: prometheus-rule-access
+  namespace: redops
+subjects:
+- kind: User
+  name: IAM#b.vignesh19@ibm.com
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: prometheus-rule-manager
+  apiGroup: rbac.authorization.k8s.io

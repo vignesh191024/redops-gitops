@@ -2,13 +2,13 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kafka-trigger
-  namespace: openshift-gitops
+  namespace: redops
 spec:
   project: default
   source:
     repoURL: 'https://github.com/vignesh191024/redops-gitops'
     targetRevision: main
-    path: argocd/kafka-trigger
+    path: apps/kafka-trigger
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: redops

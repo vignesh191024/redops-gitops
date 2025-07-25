@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-bridge-consumer
+  namespace: redops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-bridge-consumer
+  template:
+    metadata:
+      labels:
+        app: kafka-bridge-consumer
+    spec:
+      containers:
+        - name: kafka-bridge-consumer
+          image: image-registry.openshift-image-registry.svc:5000/redops/kafka-bridge-consumer:latest
+          ports:
+            - containerPort: 5000
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-bridge-consumer
+  namespace: redops
+spec:
+  selector:
+    app: kafka-bridge-consumer
+  ports:
+    - port: 80
+      targetPort: 5000

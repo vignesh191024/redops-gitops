@@ -1,0 +1,13 @@
+# ai-pod-manager-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-manager
+  namespace: redops
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"] 

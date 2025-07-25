@@ -42,10 +42,14 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/alertmanager
+            - name: data
+              mountPath: /alertmanager
       volumes:
         - name: config-volume
           configMap:
             name: alertmanager-config
+        - name: data
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -54,7 +58,6 @@ metadata:
   namespace: redops
   labels:
     app: alertmanager
-
 data:
   alertmanager.yml: |
     global:
@@ -65,10 +68,10 @@ data:
       group_wait: 10s
       group_interval: 30s
       repeat_interval: 1h
-      receiver: 'kafka-webhook'
+      receiver: 'alert-translator'
 
     receivers:
-      - name: 'kafka-webhook'
+      - name: 'alert-translator'
         webhook_configs:
-          - url: 'http://kafka-webhook.redops.svc:80/'
+          - url: 'http://alert-translator.redops.svc:8080/translate'
             send_resolved: true
